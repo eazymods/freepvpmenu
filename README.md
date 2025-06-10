@@ -9,3 +9,6 @@ For Any Support Join discord.gg/eazymods
 
 # reselling
 DO NOT Resell This As Its Not Even Worth $1....
+
+# preview 
+https://youtu.be/ve-zz0pUqkw
