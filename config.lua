@@ -1,4 +1,4 @@
-Config = {
+Eazy = {
     ['Main'] = {
         keybind = 'K',
         Locations = {
@@ -8,14 +8,11 @@ Config = {
 
         },
         Items = {
-            {item = 'medkit', amount = 1 }, 
             {item = 'WEAPON_APPISTOL'}
         },
         Teleports = {
             ['Ramps'] = {
-                {label = 'Skate', coords = vec3(1,1,1)},
-                {label = 'Airport', coords = vec3(1,1,1)},
-                {label = 'Poop', coords = vec3(1,1,1)},
+                {label = 'Skate', coords = vec3(-956.1824, -792.8267, 15.9211)},
             }
         },
         Vehicles = {
