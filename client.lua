@@ -17,7 +17,7 @@ local function createMenu(i, menu, label, options)
         local data = options[selected]
 
         if data.type == 'weapon' or data.type == 'item' then 
-            TriggerServerEvent('eazy:give', menu, selected)
+            TriggerServerEvent('eazy:give', i, data.item or data.label)
         elseif data.type == 'teleport' then 
             DoScreenFadeOut(100) 
             StartPlayerTeleport(cache.playerId, data.coords, 0.0, false, true, true) 
@@ -41,22 +41,20 @@ local function createMenu(i, menu, label, options)
         elseif data.type == 'Armor' then
             SetPedArmour(cache.ped, 100)
         else
-            TriggerServerEvent(':clear')
+            TriggerServerEvent('eazy:clear')
         end
     end)
 end
 
-AddEventHandler('esx:playerLoaded', function ()
-      
-
-    for menu, data in pairs(Config) do 
+function buildKMenus()
+    for menu, data in pairs(Eazy) do 
         lib.addKeybind({
             name = 'menu'.. menu,
-            description = 'Donate 4 More Options',
+            description = 'FREEPVPMENU',
             defaultKey = data.keybind,
             onPressed = function()
                 lib.showMenu('KMENU:'.. menu)
-
+                print('[KMENU] Menu key pressed:', menu)
             end,
         })
 
@@ -75,7 +73,6 @@ AddEventHandler('esx:playerLoaded', function ()
                     teleport.close = false
                     teleport.type = 'teleport'
                     teleport.category = category
-
                     tps[l] = teleport
                 end
 
@@ -92,10 +89,17 @@ AddEventHandler('esx:playerLoaded', function ()
             local options = {}
 
             for k = 1, #data.Items do 
-                local item = data.Items[k]
-                local label = itemNames[item?.item] or 'No Label Found'
-                options[k] = { label = label.. ((item.price and ' - $'.. lib.math.groupdigits(item.price)) or ''), type = 'item', close = false }
-            end     
+                local itemData = data.Items[k]
+                local itemName = type(itemData) == "table" and itemData.item or itemData
+                local label = itemNames[itemName] or itemName
+            
+                options[k] = { 
+                    label = label.. ((itemData.price and ' - $'.. lib.math.groupdigits(itemData.price)) or ''), 
+                    type = 'item', 
+                    item = itemName, 
+                    close = false 
+                }
+            end  
 
             createMenu(menu, 'ITEMS', 'Items', options)
         end
@@ -124,11 +128,22 @@ AddEventHandler('esx:playerLoaded', function ()
             id = 'KMENU:'..menu,
             title = 'Donate For MORE Options',
             options = menuOptions,
-            position = 'bottom-right'
+            position = 'top-right'
         }, function (selected)
             lib.showMenu('KMENU:'..menu..':'..menuOptions[selected].menu)
         end)
-
     end
+end
 
+
+RegisterNetEvent('onClientResourceStart')
+AddEventHandler('onClientResourceStart', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    print("[KMENU] Resource started. Building menus...")
+    buildKMenus()
+end)
+
+RegisterCommand("openkmenu", function()
+    print("[KMENU] Opening menu manually")
+    lib.showMenu("KMENU:Main")
 end)
